@@ -8,6 +8,7 @@ const API_BASE = 'http://localhost:8000/api';
 const USER_ID = 'demo_user';
 
 export function App() {
+  const [viewMode, setViewMode] = useState<'split' | 'phone'>('split');
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'init_1',
@@ -163,7 +164,7 @@ export function App() {
     }
   };
 
-  const handleExecuteDemoStep = (_stepNum: number, text: string) => {
+  const handleExecuteDemoStep = (stepNum: number, text: string) => {
     if (text === 'SIMULATE_NEXT_MORNING') {
       handleTriggerReminder();
     } else {
@@ -219,32 +220,80 @@ export function App() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden' }}>
-      {/* Hackathon Demo Flow Bar */}
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden', backgroundColor: '#080c14' }}>
+      {/* Hackathon Demo Flow & View Mode Bar */}
       <DemoFlowBar
         onExecuteStep={handleExecuteDemoStep}
         onResetData={handleResetDemoData}
         isProcessing={isProcessing}
+        viewMode={viewMode}
+        onToggleViewMode={() => setViewMode(prev => prev === 'split' ? 'phone' : 'split')}
       />
 
-      {/* Main Workspace Split View */}
-      <div style={{ display: 'grid', gridTemplateColumns: '440px 1fr', flex: 1, overflow: 'hidden' }}>
-        {/* Left Column: WhatsApp Web Chat Simulator */}
-        <WhatsAppChat
-          messages={messages}
-          onSendMessage={handleSendMessage}
-          onSendVision={handleSendVision}
-          onSendVoice={handleSendVoice}
-          isTyping={isProcessing}
-        />
+      {/* Main Workspace View */}
+      {viewMode === 'phone' ? (
+        /* Smartphone Video Prototype Recording View */
+        <div style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#05080f',
+          padding: '20px'
+        }}>
+          <div style={{
+            width: '410px',
+            height: '840px',
+            borderRadius: '44px',
+            border: '10px solid #1e293b',
+            boxShadow: '0 25px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(16, 185, 129, 0.2)',
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            position: 'relative',
+            backgroundColor: '#0b141a'
+          }}>
+            {/* Phone Notch */}
+            <div style={{
+              position: 'absolute',
+              top: '0',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '120px',
+              height: '24px',
+              backgroundColor: '#1e293b',
+              borderBottomLeftRadius: '14px',
+              borderBottomRightRadius: '14px',
+              zIndex: 100
+            }} />
 
-        {/* Right Column: Nutrition & Agent Intelligence Dashboard */}
-        <Dashboard
-          data={dashboardData}
-          actionTraces={recentActionTraces}
-          onTriggerReminder={handleTriggerReminder}
-        />
-      </div>
+            <WhatsAppChat
+              messages={messages}
+              onSendMessage={handleSendMessage}
+              onSendVision={handleSendVision}
+              onSendVoice={handleSendVoice}
+              isTyping={isProcessing}
+            />
+          </div>
+        </div>
+      ) : (
+        /* Split View (Desktop Web Simulator + Live Dashboard) */
+        <div style={{ display: 'grid', gridTemplateColumns: '440px 1fr', flex: 1, overflow: 'hidden' }}>
+          <WhatsAppChat
+            messages={messages}
+            onSendMessage={handleSendMessage}
+            onSendVision={handleSendVision}
+            onSendVoice={handleSendVoice}
+            isTyping={isProcessing}
+          />
+
+          <Dashboard
+            data={dashboardData}
+            actionTraces={recentActionTraces}
+            onTriggerReminder={handleTriggerReminder}
+          />
+        </div>
+      )}
     </div>
   );
 }

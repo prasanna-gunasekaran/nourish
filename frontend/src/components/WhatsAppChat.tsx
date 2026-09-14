@@ -44,92 +44,115 @@ export const WhatsAppChat: React.FC<WhatsAppChatProps> = ({
       borderRight: '1px solid #1e293b',
       position: 'relative'
     }}>
-      {/* WhatsApp Chat Header */}
+      {/* WhatsApp Mobile Video Prototype Header */}
       <div style={{
-        backgroundColor: '#202c33',
-        padding: '12px 16px',
+        backgroundColor: '#008069',
+        color: '#ffffff',
+        padding: '8px 16px 12px 16px',
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        borderBottom: '1px solid #2a3942'
+        flexDirection: 'column',
+        gap: '6px',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+        borderBottom: '1px solid rgba(0,0,0,0.1)'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ position: 'relative' }}>
-            <div style={{
-              width: '42px',
-              height: '42px',
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '1.2rem',
-              boxShadow: '0 0 10px rgba(16, 185, 129, 0.4)'
-            }}>
-              🥗
-            </div>
-            <span style={{
-              position: 'absolute',
-              bottom: '0',
-              right: '0',
-              width: '11px',
-              height: '11px',
-              backgroundColor: '#22c55e',
-              border: '2px solid #202c33',
-              borderRadius: '50%'
-            }} />
-          </div>
-
-          <div>
-            <div style={{ color: '#e9edef', fontWeight: 600, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              Nourish AI
-              <span style={{ fontSize: '0.7rem', background: '#059669', color: '#ecfdf5', padding: '1px 6px', borderRadius: '4px' }}>
-                WhatsApp Agent
-              </span>
-            </div>
-            <div style={{ color: '#8696a0', fontSize: '0.75rem' }}>
-              Your personal nutrition agent • Online
-            </div>
+        {/* Smartphone Status Bar Simulation */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          fontSize: '0.72rem',
+          fontWeight: 600,
+          opacity: 0.95,
+          paddingBottom: '4px'
+        }}>
+          <span>9:41</span>
+          <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+            <span>5G</span>
+            <span>📶</span>
+            <span>🔋 100%</span>
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button
-            onClick={onSendVision}
-            title="Scan Food Image (Multimodal Vision)"
-            style={{
-              background: 'rgba(255,255,255,0.08)',
-              border: 'none',
-              borderRadius: '50%',
-              width: '36px',
-              height: '36px',
-              color: '#aebac1',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            <Camera size={18} />
-          </button>
-          <button
-            onClick={onSendVoice}
-            title="Send Voice Message (Speech-to-Text)"
-            style={{
-              background: 'rgba(255,255,255,0.08)',
-              border: 'none',
-              borderRadius: '50%',
-              width: '36px',
-              height: '36px',
-              color: '#aebac1',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            <Mic size={18} />
-          </button>
+        {/* WhatsApp App Header */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ position: 'relative' }}>
+              <div style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                background: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '1.25rem',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+              }}>
+                🥗
+              </div>
+              <span style={{
+                position: 'absolute',
+                bottom: '1px',
+                right: '1px',
+                width: '11px',
+                height: '11px',
+                backgroundColor: '#25D366',
+                border: '2px solid #008069',
+                borderRadius: '50%'
+              }} />
+            </div>
+
+            <div>
+              <div style={{ color: '#ffffff', fontWeight: 700, fontSize: '0.98rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                Nourish AI
+                <span style={{ fontSize: '0.65rem', background: 'rgba(255,255,255,0.2)', color: '#ffffff', padding: '1px 6px', borderRadius: '4px', fontWeight: 600 }}>
+                  OFFICIAL AGENT
+                </span>
+              </div>
+              <div style={{ color: '#d1fae5', fontSize: '0.74rem' }}>
+                WhatsApp Business • online
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button
+              onClick={onSendVision}
+              title="Scan Food Image (Multimodal Vision)"
+              style={{
+                background: 'rgba(255,255,255,0.15)',
+                border: 'none',
+                borderRadius: '50%',
+                width: '36px',
+                height: '36px',
+                color: '#ffffff',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <Camera size={18} />
+            </button>
+            <button
+              onClick={onSendVoice}
+              title="Send Voice Message (Speech-to-Text)"
+              style={{
+                background: 'rgba(255,255,255,0.15)',
+                border: 'none',
+                borderRadius: '50%',
+                width: '36px',
+                height: '36px',
+                color: '#ffffff',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <Mic size={18} />
+            </button>
+          </div>
         </div>
       </div>
 

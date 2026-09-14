@@ -1,10 +1,12 @@
 import React from 'react';
-import { Play, RotateCcw, Sparkles } from 'lucide-react';
+import { Play, RotateCcw, Sparkles, Smartphone, Monitor } from 'lucide-react';
 
 interface DemoFlowBarProps {
   onExecuteStep: (stepNumber: number, stepText: string) => void;
   onResetData: () => void;
   isProcessing: boolean;
+  viewMode: 'split' | 'phone';
+  onToggleViewMode: () => void;
 }
 
 const DEMO_STEPS = [
@@ -18,11 +20,17 @@ const DEMO_STEPS = [
   { num: 8, label: "8. Next Morning", text: "SIMULATE_NEXT_MORNING" },
 ];
 
-export const DemoFlowBar: React.FC<DemoFlowBarProps> = ({ onExecuteStep, onResetData, isProcessing }) => {
+export const DemoFlowBar: React.FC<DemoFlowBarProps> = ({
+  onExecuteStep,
+  onResetData,
+  isProcessing,
+  viewMode,
+  onToggleViewMode
+}) => {
   return (
     <div style={{
-      background: 'linear-gradient(90deg, #0f172a 0%, #1e1b4b 100%)',
-      borderBottom: '1px solid #312e81',
+      background: 'linear-gradient(90deg, #090e17 0%, #064e3b 100%)',
+      borderBottom: '1px solid rgba(255,255,255,0.1)',
       padding: '8px 16px',
       display: 'flex',
       alignItems: 'center',
@@ -31,9 +39,9 @@ export const DemoFlowBar: React.FC<DemoFlowBarProps> = ({ onExecuteStep, onReset
       overflowX: 'auto'
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 'max-content' }}>
-        <Sparkles size={18} color="#a78bfa" />
-        <span style={{ fontWeight: 600, fontSize: '0.85rem', color: '#c7d2fe', letterSpacing: '0.5px' }}>
-          HACKATHON DEMO FLOW:
+        <Sparkles size={18} color="#34d399" />
+        <span style={{ fontWeight: 700, fontSize: '0.85rem', color: '#ecfdf5', letterSpacing: '0.5px' }}>
+          NOURISH DEMO FLOW:
         </span>
       </div>
 
@@ -44,13 +52,13 @@ export const DemoFlowBar: React.FC<DemoFlowBarProps> = ({ onExecuteStep, onReset
             disabled={isProcessing}
             onClick={() => onExecuteStep(step.num, step.text)}
             style={{
-              background: '#312e81',
-              color: '#e0e7ff',
-              border: '1px solid #4338ca',
+              background: '#065f46',
+              color: '#ecfdf5',
+              border: '1px solid #047857',
               borderRadius: '6px',
               padding: '4px 10px',
               fontSize: '0.75rem',
-              fontWeight: 500,
+              fontWeight: 600,
               cursor: isProcessing ? 'not-allowed' : 'pointer',
               whiteSpace: 'nowrap',
               display: 'inline-flex',
@@ -59,36 +67,60 @@ export const DemoFlowBar: React.FC<DemoFlowBarProps> = ({ onExecuteStep, onReset
               transition: 'all 0.2s ease',
               opacity: isProcessing ? 0.6 : 1
             }}
-            onMouseOver={(e) => (e.currentTarget.style.background = '#3730a3')}
-            onMouseOut={(e) => (e.currentTarget.style.background = '#312e81')}
+            onMouseOver={(e) => (e.currentTarget.style.background = '#047857')}
+            onMouseOut={(e) => (e.currentTarget.style.background = '#065f46')}
           >
-            <Play size={10} color="#818cf8" fill="#818cf8" />
+            <Play size={10} color="#34d399" fill="#34d399" />
             {step.label}
           </button>
         ))}
       </div>
 
-      <button
-        disabled={isProcessing}
-        onClick={onResetData}
-        style={{
-          background: 'rgba(244, 63, 94, 0.15)',
-          color: '#fda4af',
-          border: '1px solid rgba(244, 63, 94, 0.4)',
-          borderRadius: '6px',
-          padding: '4px 10px',
-          fontSize: '0.75rem',
-          fontWeight: 600,
-          cursor: 'pointer',
-          whiteSpace: 'nowrap',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '4px'
-        }}
-      >
-        <RotateCcw size={12} />
-        Reset Demo Data
-      </button>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <button
+          onClick={onToggleViewMode}
+          title="Toggle Mobile Video Recording View"
+          style={{
+            background: viewMode === 'phone' ? '#10b981' : 'rgba(255,255,255,0.1)',
+            color: '#ffffff',
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: '6px',
+            padding: '4px 10px',
+            fontSize: '0.75rem',
+            fontWeight: 600,
+            cursor: 'pointer',
+            whiteSpace: 'nowrap',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '5px'
+          }}
+        >
+          {viewMode === 'phone' ? <Monitor size={14} /> : <Smartphone size={14} />}
+          {viewMode === 'phone' ? 'Split View' : '📱 Mobile Video Mode'}
+        </button>
+
+        <button
+          disabled={isProcessing}
+          onClick={onResetData}
+          style={{
+            background: 'rgba(244, 63, 94, 0.15)',
+            color: '#fda4af',
+            border: '1px solid rgba(244, 63, 94, 0.4)',
+            borderRadius: '6px',
+            padding: '4px 10px',
+            fontSize: '0.75rem',
+            fontWeight: 600,
+            cursor: 'pointer',
+            whiteSpace: 'nowrap',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '4px'
+          }}
+        >
+          <RotateCcw size={12} />
+          Reset Demo Data
+        </button>
+      </div>
     </div>
   );
 };
