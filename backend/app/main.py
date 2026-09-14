@@ -1,6 +1,8 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, Any, Optional
+import os
+import httpx
 
 from app.models.schemas import ChatRequest, ChatResponse
 from app.repositories.sqlite_repo import SQLiteDatabase, SQLiteMealRepository, SQLiteUserRepository, SQLiteReminderRepository
@@ -52,6 +54,86 @@ def read_root():
         "mode": "Zero-AWS Local Execution Mode",
         "version": "1.0.0"
     }
+
+# ---------------------------------------------------------
+# LIVE WHATSAPP INTEGRATION ENDPOINTS (Meta Cloud API & Twilio)
+# ---------------------------------------------------------
+
+# 1. Meta WhatsApp Cloud API Verification Webhook (GET)
+@app.get("/webhook")
+@app.get("/api/whatsapp/webhook")
+def verify_meta_webhook(request: Request):
+    params = request.query_params
+    mode = params.get("hub.mode")
+    token = params.get("hub.verify_token")
+    challenge = params.get("hub.challenge")
+
+    expected_token = os.getenv("WHATSAPP_VERIFY_TOKEN", "nourish_verify_token")
+
+    if mode == "subscribe" and token == expected_token:
+        return Response(content=challenge, media_type="text/plain")
+    
+    raise HTTPException(status_code=403, detail="Verification token mismatch")
+
+# 2. Meta WhatsApp Cloud API Inbound Webhook (POST)
+@app.post("/webhook")
+@app.post("/api/whatsapp/webhook")
+async def handle_meta_whatsapp_inbound(request: Request):
+    payload = await request.json()
+    try:
+        entry = payload.get("entry", [])[0]
+        changes = entry.get("changes", [])[0]
+        value = changes.get("value", {})
+        messages = value.get("messages", [])
+
+        if not messages:
+            return {"status": "ok", "detail": "No message body"}
+
+        message = messages[0]
+        from_phone = message.get("from")  # Sender's WhatsApp Phone Number
+        msg_text = message.get("text", {}).get("body", "")
+
+        if msg_text and from_phone:
+            # Execute Core Agent Loop with sender's phone number as user_id
+            response = agent_core.process_message(msg_text, user_id=from_phone)
+
+            # Send reply back via Meta Cloud API if credentials exist
+            access_token = os.getenv("WHATSAPP_ACCESS_TOKEN")
+            phone_number_id = os.getenv("WHATSAPP_PHONE_NUMBER_ID")
+
+            if access_token and phone_number_id:
+                async with httpx.AsyncClient() as client:
+                    url = f"https://graph.facebook.com/v17.0/{phone_number_id}/messages"
+                    headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
+                    data = {
+                        "messaging_product": "whatsapp",
+                        "to": from_phone,
+                        "type": "text",
+                        "text": {"body": response.reply_text}
+                    }
+                    await client.post(url, json=data, headers=headers)
+
+            return {"status": "processed", "reply": response.reply_text}
+
+    except Exception as e:
+        print(f"Meta Webhook Error: {e}")
+
+    return {"status": "ok"}
+
+# 3. Twilio WhatsApp Webhook (POST)
+@app.post("/api/whatsapp/twilio")
+async def handle_twilio_whatsapp_inbound(request: Request):
+    form_data = await request.form()
+    from_phone = form_data.get("From", "whatsapp_user")
+    msg_text = form_data.get("Body", "")
+
+    response = agent_core.process_message(msg_text, user_id=from_phone)
+
+    twiml_response = f"""<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Message>{response.reply_text}</Message>
+</Response>"""
+    return Response(content=twiml_response, media_type="application/xml")
 
 @app.post("/api/chat", response_model=ChatResponse)
 def handle_chat(req: ChatRequest):
